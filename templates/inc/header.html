@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>{{ page_title }}</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
+<link rel="stylesheet" href="/css/style.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('a.open_edit_form').click(function(){
+		var id = $(this).parent().attr('name');
+		$.get('/edit/', {item_id: id}, function(content){
+			$('.edit_form_content').html(content);
+			$('.edit_form').show('slow');
+		});
+		return false;
+	});
+	$('a.close_edit_form, .edit_form__bg').click(function(){
+		$('.edit_form').hide('slow');
+		return false;
+	});
+	$('body').bind('keydown', function(event){
+		if (event.keyCode == 27){//ESC
+			$('.edit_form').hide('slow');
+		}
+	});
+	$('.delete_item, .expire_item').click(function(){
+		if($(this).attr('class') == 'delete_item'){
+			var msg = 'Действительно удалить эту ссылку?';
+			var action = '/delete/';
+		}else if($(this).attr('class') == 'expire_item'){
+			var msg = 'Действительно ссылка более не актуальна?';
+			var action = '/expire/';
+		}else return false;
+		
+		if(!confirm(msg)) return false;
+		var id = $(this).parent().attr('name');
+		$.get(action, {item_id: id}, function(res){
+			if(res && res.ok){
+				$('div[name='+res.item_id+']').remove();
+			}else{
+				alert('Произошла ошибка');
+			}
+		});
+		return false;
+	});
+});
+</script>
+</head>
+<body>
+<div class="body">
+	<div class="header_wrapper">
+		<div class="header">
+			<h1>Горка полезных ссылок {% if user %}от {{ user }}{% endif%}</h1>
+			{% include 'inc/menu_items.html' %}
+		</div>
+	</div>
+	
+	<div class="edit_form" style="display:none;">
+		<div class="edit_form__box">
+			<a href="#" class="close_edit_form">закрыть</a>
+			<div class="edit_form_content"></div>
+		</div>
+		<div class="edit_form__bg"></div>
+	</div>
+	
+	<div class="content">
+	

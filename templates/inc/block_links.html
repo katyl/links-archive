@@ -1,0 +1,9 @@
+<div class="list">
+{% for link in links %}
+	{% include 'inc/item_link.html' %}
+{% empty %}
+	<p>Ничего не нашлось</p>
+{% endfor %}
+</div>
+
+{% include 'inc/pager.html' %}

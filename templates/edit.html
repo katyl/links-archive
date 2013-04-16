@@ -1,0 +1,86 @@
+{% if item_id %}
+	<h4>Редактирование ссылки</h4>
+{% else %}
+	<h4>Добавление ссылки</h4>
+{% endif %}
+
+<form name="edit_form" method="post" action="/save/">
+<div class="field_link">
+	<div>Ссылка: <span class="error">{{ field.errors }}</span></div>
+	<div><input type="text" name="link" value="{{ link.link }}"></div>
+</div>
+<div class="field_description">
+	<div>Описание <span class="error">{{ field.errors }}</span></div>
+	<div><input type="text" name="description" value="{{ link.description }}"></div>
+</div>
+<div class="field_is_actual">
+	<div>Актуальна? <span class="error">{{ field.errors }}</span></div>
+	<div><input type="checkbox" name="is_actual" value="1" {% if link.is_actual %}checked{% endif %}></div>
+</div>
+<div>Тэги</div>
+<div><input type="text" name="tags" id="tags" value="{% if link and link.tags %}{{ link.tags|join:', ' }}{% endif %}"></div>
+<div><input type="submit" value="Сохранить"> <i class="save_ok">Сохранение успешно</i></div>
+<input type="hidden" name="item_id" value="{{ item_id }}">
+{% csrf_token %}
+</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var tags = [
+	{% for tag in tags %}'{{ tag.name }}',{% endfor %}
+	];
+	function split(val) {
+		return val.split(/,\s*/);
+	}
+	function extractLast(term) {
+		return split(term).pop();
+	}
+
+	$('#tags')
+		// don't navigate away from the field on tab when selecting an item
+		.bind("keydown", function(event) {
+			if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+				event.preventDefault();
+			}
+		})
+		.autocomplete({
+			minLength: 1,
+			source: function(request, response) {
+				// delegate back to autocomplete, but extract the last term
+				response($.ui.autocomplete.filter(tags, extractLast(request.term)));
+			},
+			focus: function() {
+				// prevent value inserted on focus
+				return false;
+			},
+			select: function(event, ui) {
+				var terms = split(this.value);
+				// remove the current input
+				terms.pop();
+				// add the selected item
+				terms.push(ui.item.value);
+				// add placeholder to get the comma-and-space at the end
+				terms.push("");
+				this.value = terms.join(", ");
+				return false;
+			}
+		});
+	
+	$('form[name=edit_form]').submit(function(){
+		$('.error').text('');
+		$.post('/save/', $(this).serialize(), function(resp){
+			if(resp.fail){
+				for(var i=0; i<resp.errors.length; i++){
+					$('.field_' + resp.errors[i].field + ' .error').text(resp.errors[i].msg);
+					//alert(resp.errors[i].field);
+					//alert(resp.errors[i].msg);
+				}
+			}else{
+				$('.save_ok').show();
+				setTimeout('window.location = "/"', 1000);
+			}
+		});
+		return false;
+	});
+});
+</script>

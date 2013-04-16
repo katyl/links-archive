@@ -1,0 +1,13 @@
+<div class="link" name="{{ link.key }}">
+	<a href="{{ link.link }}" target="_blank">{{ link.description }}</a>
+	<i>добавлено {{ link.created|date:"j F, H:m" }}</i>
+	<a href="#" class="open_edit_form">edit</a>
+	<a href="#" class="expire_item">expire</a>
+	<a href="#" class="delete_item">delete</a>
+	<div class="loc">{{ link.link|urlizetrunc:70 }}</div>
+	<div class="tags">
+		{% for tag in link.tags %}
+			<span><a href="/tag/{{ tag.tag.name }}/">{{ tag.tag.name }}</a></span>
+		{% endfor %}
+	</div>
+</div>

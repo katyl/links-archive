@@ -1,0 +1,5 @@
+	<ul class="pager">
+	{% for p in pages %}
+		<li><a href="?page={{ p }}" {% if p == page %}class="active"{% endif %}>{{ p }}</a></li>
+	{% endfor %}
+	</ul>

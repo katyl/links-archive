@@ -1,0 +1,18 @@
+{% include 'inc/header.html' %}
+<div class="dhead">
+Список тэгов
+</div>
+
+{% if tags %}
+	<ul class="tags">
+	{% for tag in tags %}
+		<li class="tag{{ tag.size }}">
+			<a href="/tag/{{ tag.name }}/">{{ tag.name }}</a>  {{ tag.num_links }}
+		</li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>Ничего не нашлось</p>
+{% endif %}
+
+{% include 'inc/footer.html' %}

@@ -1,0 +1,22 @@
+application: links-archive
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+
+handlers:
+- url: /css
+  static_dir: data/css
+  
+- url: /img
+  static_dir: data/img
+
+- url: .*
+  script: main.app
+  login: required
+
+
+libraries:
+- name: webapp2
+  version: "2.5.2"

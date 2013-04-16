@@ -1,0 +1,20 @@
+{% include 'inc/header.html' %}
+<div class="dhead">
+{% if day %}
+	{{ year}}-{{ month|stringformat:"02d" }}-{{ day|stringformat:"02d" }}
+{% else %}{% if month %}
+	{{ year}}-{{ month|stringformat:"02d" }}
+{% else %}{% if year %}
+	{{ year}}
+{% else %}{% if not_actual %}
+	Список устаревших ссылок
+{% else %}{% if tag %}
+	Ссылки по тэгу &laquo;{{ tag }}&raquo;
+{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
+</div>
+
+
+{% include 'inc/block_links.html' %}
+
+
+{% include 'inc/footer.html' %}

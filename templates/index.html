@@ -1,0 +1,19 @@
+﻿{% include 'inc/header.html' %}
+
+{% if links %}
+	<div class="list">
+	{% for link in links %}
+		{% ifchanged link.created|date:"Ymd" %}
+			<div class="dhead"><a href="/list/{{ link.created|date:"Y/m/d" }}/">{{ link.created|date:"j F" }}</a></div>
+		{% endifchanged %}
+		{% include 'inc/item_link.html' %}
+	{% endfor %}
+	
+	{% include 'inc/pager.html' %}
+	
+	</div>
+{% else %}
+	<p>No links yet ;(</p>
+{% endif %}
+
+{% include 'inc/footer.html' %}

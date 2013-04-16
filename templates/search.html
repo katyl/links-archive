@@ -1,0 +1,83 @@
+{% include 'inc/header.html' %}
+<div class="dhead">Поиск</div>
+
+<form>
+<input type="hidden" name="make_search" value="1">
+<fieldset><legend>параметры поиска</legend>
+<div style="width:50%;float:left;">
+
+<div>Текст</div>
+<div><input type="text" name="text" class="text" value="{{ query.text }}"></div>
+
+<div>Тэг</div>
+<div><input type="text" name="tag" id="tag" class="text" value="{{ query.tag }}"></div>
+
+<div><input type="submit" value="искать" class="submit"></div>
+</div>
+
+<div style="width:50%;float:left;">
+<div>Время создания</div>
+<div>
+<input type="radio" name="created" value="1day" {% if query.created == '1day' %}checked{% endif %}>за последний день<br>
+<input type="radio" name="created" value="1week" {% if query.created == '1week' %}checked{% endif %}>за последнюю неделю<br>
+<input type="radio" name="created" value="1month" {% if query.created == '1month' %}checked{% endif %}>за последний месяц<br>
+<input type="radio" name="created" value="period" {% if query.created == 'period' %}checked{% endif %}>за период
+c <input type="text" name="" class="date" id="date">
+по <input type="text" name="" class="date" id="date2">
+</div>
+
+<div>Учитывать устаревшие</div>
+<div><input type="checkbox" name="show_not_actual" value="1" {% if query.show_not_actual %}checked{% endif %}></div>
+</div>
+</fieldset>
+</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var tags = [
+	{% for tag in tags %}'{{ tag.name }}',{% endfor %}
+	];
+	$('#tag')
+		// don't navigate away from the field on tab when selecting an item
+		.bind("keydown", function(event) {
+			if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+				event.preventDefault();
+			}
+		})
+		.autocomplete({
+			minLength: 1,
+			source: tags,
+			focus: function() {
+				// prevent value inserted on focus
+				return false;
+			}
+		});
+
+	$('#date')
+		.click(function(){
+			$(':radio[value=period]').prop('checked',true)
+		})
+		.change(function(){
+			var date = $(this).val().split('-');
+			$('#date2').datepicker('option', 'minDate', new Date(date[0], date[1]-1, date[2]));
+		})
+		.datepicker({dateFormat: 'yy-mm-dd', maxDate: -0});
+	
+	$('#date2')
+		.click(function(){
+			$(':radio[value=period]').prop('checked',true)
+		})
+		.change(function(){
+			var date = $(this).val().split('-');
+			$('#date').datepicker('option', 'maxDate', new Date(date[0], date[1]-1, date[2]));
+		})
+		.datepicker({dateFormat: 'yy-mm-dd', maxDate: -0});
+
+});
+</script>
+
+{% if make_search %}
+{% include 'inc/block_links.html' %}
+{% endif %}
+
+{% include 'inc/footer.html' %}
